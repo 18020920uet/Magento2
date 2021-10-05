@@ -24,12 +24,14 @@ bin/magento setup:install \
 --cache-backend-redis-port=6379 \
 --cleanup-database
 
-bin/magento setup:upgrade --keep-generated
 
 bin/magento module:disable Magento_TwoFactorAuth
-bin/magento cache:flush 
-php bin/magento setup:di:compile
+bin/magento cache:flush
 php bin/magento indexer:reindex
+
+
+bin/magento setup:upgrade --keep-generated
+php bin/magento setup:di:compile
 php bin/magento setup:static-content:deploy -f
 chmod -R 777 var/ generated/
 

@@ -19,7 +19,7 @@ services:
         build:
             context: ./docker/php7.4-fpm
         container_name: app
-        working_dir: /var/www/magento
+        working_dir: /var/www/
         volumes:
             -   ./src/:/var/www/
         restart: always

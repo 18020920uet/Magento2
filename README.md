@@ -6,9 +6,6 @@ Dự án thương mại điện tử
 
 - [Docker](https://docs.docker.com/engine/install)
 - [Docker-compose](https://docs.docker.com/compose/)
-- [PHP](https://www.php.net/)
-- [Composer](https://getcomposer.org/)
-
 
 ## Docker
 
@@ -30,9 +27,20 @@ Chờ đợi docker-compose tải và cài đặt lại các container đến kh
 
 ![After docker-compose build](images/After_docker-compose_build.png)
 
+Sau đó thì chỉnh quyền của thư mục elasticsearch
+
+```bash
+sudo chown -R 1000:root data/elasticsearch/
+```
+
+Để kiểm tra các container có hoạt động bình thường không thì dùng lệnh
+```bash
+docker-compose ps
+```
+
+![docker-compose ps](images/docker-compose_ps.png)
 
 Để có thể truy cập **containter app** thì dùng lệnh sau
-
 ```bash
 docker exec -it app bash
 ```
@@ -41,3 +49,123 @@ Tắt docker:
 ```bash
 docker-compose down
 ```
+
+---
+
+## Magento
+
+### Get Access keys
+
+Trước hết phải lấy **Access keys** ở [theo hướng dẫn này](https://devdocs.magento.com/guides/v2.4/install-gde/prereq/connect-auth.html)
+
+Khi đó
+
+    user: Public Key
+    password: Private Key
+
+### Install Composer
+
+```bash
+# INSTALL COMPOSER
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+php composer-setup.php && php -r "unlink('composer-setup.php');"
+```
+
+Sau khi cài đặt composer có thể sử dụng các tính năng qua câu lệnh
+```
+php composer.phar
+```
+
+### Download Magento
+
+```bash
+php composer.phar create-project --repository=https://repo.magento.com/ magento/project-community-edition magento
+```
+
+Sử dụng **Access Keys** từ trên nhập vào theo yêu cầu
+
+![User and password](images/user_and_password.png)
+
+
+### Install Magento
+
+1. Đầu tiên truy cập vào **app**
+  ```bash
+  docker exec -it app bash
+  ```
+
+  Thư mục hiện tại (Current Directory) sẽ là: **/var/www/**. Hãy chuyển đến thư mục magento vừa tải về
+
+  ```bash
+  cd magento
+  ```
+
+2. Setup mangeto với lệnh sau
+  ```bash
+  bin/magento setup:install \
+  --db-host=mysql \
+  --db-name=magento2 \
+  --db-user=root \
+  --db-password=mysql_root_password \
+  --admin-firstname={firstname} \
+  --admin-lastname={lastname} \
+  --admin-email={email} \
+  --admin-user={usernaem} \
+  --admin-password={password} \
+  --language=en_US \
+  --currency=VND \
+  --timezone=Asia/Ho_Chi_Minh \
+  --use-rewrites=1 \
+  --search-engine=elasticsearch7 \
+  --elasticsearch-host=elasticsearch \
+  --elasticsearch-port=9200 \
+  --cache-backend=redis \
+  --cache-backend-redis-server=redis \
+  --cache-backend-redis-port=6379 \
+  --cleanup-database
+  ```
+
+  Có thể tùy chinh các phần nằm trong ```{}```
+
+3. Sau khi cài xong tắt Magento_TwoFactorAuth đi để có thể đăng nhập mà không phải sử dụng bảo mật 2 lớp để truy cập vào tài khoản admin
+
+  ```bash
+  bin/magento module:disable Magento_TwoFactorAuth
+  ```
+
+
+4. Cài đặt cập nhật để Magento có thể chạy bình thường
+
+  Update module
+  ```bash
+  bin/magento setup:upgrade
+  ```
+
+  Compile source code
+  ```bash
+  bin/magento setup:di:compile
+  ```
+
+  Generate static file
+  ```bash
+  php bin/magento setup:static-content:deploy -f
+  ```
+
+  Chuyển quyền cho file **var/** và **generated/**
+  ```bash
+  chmod -R 777 var/ generated/
+  ```
+
+### Using
+
+- Truy cập **localhost:1908** để truy cập vào trang chủ của ứng dụng
+
+- Sử dụng lệnh
+  ```bash
+  bin/magento info:adminuri
+  ```
+  Kết quả sẽ là phần url của quản trị viên ```<adminurl>```.
+
+  Truy cập ```localhost:1908/<adminurl>``` để truy cập vào trang đăng nhập quản trị admin.
+
+  Sau khi truy cập vào đương link trang đăng nhập quản trị của admin thì sử dụng thông tin đã đăng ký từ trước trong khi cài đặt magento để đăng nhập vào.

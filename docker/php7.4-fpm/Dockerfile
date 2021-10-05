@@ -25,10 +25,6 @@ WORKDIR /var/www/
 RUN cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 ADD ./php-custom.ini "$PHP_INI_DIR/conf.d/"
 
-# INSTALL COMPOSER
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-php composer-setup.php && php -r "unlink('composer-setup.php');"
-
 CMD ["php-fpm"]
 
 EXPOSE 9000
