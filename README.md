@@ -20,7 +20,7 @@ Các service mà sử dụng trong docker
 Build docker bằng lệnh
 
 ```bash
-docker-compose up -d --build
+docker-compose up --build
 ```
 
 Chờ đợi docker-compose tải và cài đặt lại các container đến khi có kết quả như sau:
@@ -31,6 +31,11 @@ Sau đó thì chỉnh quyền của thư mục elasticsearch
 
 ```bash
 sudo chown -R 1000:root data/elasticsearch/
+```
+
+Rồi compose-up lại
+```bash
+docker-compose up
 ```
 
 Để kiểm tra các container có hoạt động bình thường không thì dùng lệnh
@@ -102,7 +107,7 @@ Sử dụng **Access Keys** từ trên nhập vào theo yêu cầu
 
 2. Setup mangeto với lệnh sau
   ```bash
-  bin/magento setup:install \
+  php bin/magento setup:install \
   --db-host=mysql \
   --db-name=magento2 \
   --db-user=root \
@@ -130,7 +135,7 @@ Sử dụng **Access Keys** từ trên nhập vào theo yêu cầu
 3. Sau khi cài xong tắt Magento_TwoFactorAuth đi để có thể đăng nhập mà không phải sử dụng bảo mật 2 lớp để truy cập vào tài khoản admin
 
   ```bash
-  bin/magento module:disable Magento_TwoFactorAuth
+  php bin/magento module:disable Magento_TwoFactorAuth
   ```
 
 
@@ -138,12 +143,12 @@ Sử dụng **Access Keys** từ trên nhập vào theo yêu cầu
 
   Update module
   ```bash
-  bin/magento setup:upgrade
+  php php bin/magento setup:upgrade
   ```
 
   Compile source code
   ```bash
-  bin/magento setup:di:compile
+  php bin/magento setup:di:compile
   ```
 
   Generate static file
@@ -162,10 +167,42 @@ Sử dụng **Access Keys** từ trên nhập vào theo yêu cầu
 
 - Sử dụng lệnh
   ```bash
-  bin/magento info:adminuri
+  php bin/magento info:adminuri
   ```
   Kết quả sẽ là phần url của quản trị viên ```<adminurl>```.
 
   Truy cập ```localhost:1908/<adminurl>``` để truy cập vào trang đăng nhập quản trị admin.
 
   Sau khi truy cập vào đương link trang đăng nhập quản trị của admin thì sử dụng thông tin đã đăng ký từ trước trong khi cài đặt magento để đăng nhập vào.
+
+
+### Add modules
+
+Truy cập vào **app**
+
+```bash
+docker exec -it app bash
+```
+
+Copy thư mục extensions trong src vào magento
+
+```bash
+# root@..... /var/www#
+cp -r extensions/* magento
+```
+
+Cập nhật lại các module
+
+```bash
+php bin/magento setup:upgrade
+php bin/magento setup:di:compile
+php bin/magento setup:static-content:deploy
+```
+
+### Một số hướng dẫn thêm
+
+[Cài đặt theme cho Magento 2](https://www.mageworx.com/blog/how-to-install-a-theme-in-magento-2)
+
+[Một số hướng dẫn cơ bản của Magento 2](https://devdocs.magento.com/videos/fundamentals/)
+
+Một số tài liệu thêm có thể tìm thấy ở trong phần Tài liệu
