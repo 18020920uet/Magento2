@@ -1,6 +1,5 @@
-# tmdt_2021II_INT3506_1
-Dự án thương mại điện tử
-
+# Hướng dẫn sử dụng
+Dự án hệ thống thương mại điện tử sử dụng Docker và Magento2
 
 ## Một số yêu cầu về phần cài đặt
 
@@ -23,9 +22,9 @@ Build docker bằng lệnh
 docker-compose up --build
 ```
 
-Chờ đợi docker-compose tải và cài đặt lại các container đến khi có kết quả như sau:
+Chờ đợi docker-compose tải và cài đặt lại các container đến khi có kết quả như sau
 
-![After docker-compose build](images/After_docker-compose_build.png)
+Sử dụng ``Ctrl + C``` để thoát ra khỏi **service**
 
 Sau đó thì chỉnh quyền của thư mục elasticsearch
 
@@ -35,8 +34,13 @@ sudo chown -R 1000:root data/elasticsearch/
 
 Rồi compose-up lại
 ```bash
-docker-compose up
+docker-compose up -d
 ```
+
+Sau khi chạy sẽ hiện kết quả như sau
+
+![After docker-compose build](images/After_docker-compose_build.png)
+
 
 Để kiểm tra các container có hoạt động bình thường không thì dùng lệnh
 ```bash
@@ -44,6 +48,12 @@ docker-compose ps
 ```
 
 ![docker-compose ps](images/docker-compose_ps.png)
+
+Chú ý nếu có vấn đề gì thì có thể sử dụng lệnh dưới đây để kiểm tra lỗi và sửa
+
+```
+docker-compose logs
+```
 
 Để có thể truy cập **containter app** thì dùng lệnh sau
 ```bash
@@ -68,7 +78,7 @@ Khi đó
     user: Public Key
     password: Private Key
 
-### Install Composer
+### Install Composer (Không yêu cầu)
 
 ```bash
 # INSTALL COMPOSER
@@ -205,4 +215,14 @@ php bin/magento setup:static-content:deploy
 
 [Một số hướng dẫn cơ bản của Magento 2](https://devdocs.magento.com/videos/fundamentals/)
 
-Một số tài liệu thêm có thể tìm thấy ở trong phần Tài liệu
+[Một số tài liệu thêm có thể tìm thấy ở trong phần Tài liệu](https://github.com/inFngNam/2021II_INT3506_1/tree/main/T%C3%A0i%20li%E1%BB%87u)
+
+### Thành viên trong nhóm
+
+1. Nguyễn Văn Nam - 18020920
+2. Lê Thị Tâm - 18021118
+3. Nguyễn Thị Xuân - 18021451
+
+
+
+
